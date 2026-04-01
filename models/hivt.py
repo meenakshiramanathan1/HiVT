@@ -16,11 +16,11 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from losses import LaplaceNLLLoss
-from losses import SoftTargetCrossEntropyLoss
-from metrics import ADE
-from metrics import FDE
-from metrics import MR
+# from losses import LaplaceNLLLoss
+# from losses import SoftTargetCrossEntropyLoss
+# from metrics import ADE
+# from metrics import FDE
+# from metrics import MR
 from models import GlobalInteractor
 from models import LocalEncoder
 from models import MLPDecoder
@@ -80,12 +80,12 @@ class HiVT(pl.LightningModule):
                                   future_steps=future_steps,
                                   num_modes=num_modes,
                                   uncertain=True)
-        self.reg_loss = LaplaceNLLLoss(reduction='mean')
-        self.cls_loss = SoftTargetCrossEntropyLoss(reduction='mean')
+        # self.reg_loss = LaplaceNLLLoss(reduction='mean')
+        # self.cls_loss = SoftTargetCrossEntropyLoss(reduction='mean')
 
-        self.minADE = ADE()
-        self.minFDE = FDE()
-        self.minMR = MR()
+        # self.minADE = ADE()
+        # self.minFDE = FDE()
+        # self.minMR = MR()
 
     def forward(self, data: TemporalData):
         if self.rotate:

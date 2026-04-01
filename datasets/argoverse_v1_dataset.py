@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import os
+import sys
 from itertools import permutations
 from itertools import product
 from typing import Callable, Dict, List, Optional, Tuple, Union
@@ -19,6 +20,13 @@ from typing import Callable, Dict, List, Optional, Tuple, Union
 import numpy as np
 import pandas as pd
 import torch
+
+# Support vendored Argoverse source under third_party/HiVT/argoverse
+# when the project is run from repository root (without pip-installing argoverse).
+_HIVT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _HIVT_ROOT not in sys.path:
+    sys.path.insert(0, _HIVT_ROOT)
+
 from argoverse.map_representation.map_api import ArgoverseMap
 from torch_geometric.data import Data
 from torch_geometric.data import Dataset
@@ -84,7 +92,14 @@ class ArgoverseV1Dataset(Dataset):
         return len(self._raw_file_names)
 
     def get(self, idx) -> Data:
-        return torch.load(self.processed_paths[idx])
+        # PyTorch 2.6 defaults to weights_only=True, which cannot unpickle
+        # TemporalData objects saved by this dataset preprocessing pipeline.
+        try:
+            return torch.load(self.processed_paths[idx], weights_only=False)
+        except TypeError:
+            # Backward compatibility with older torch versions that do not
+            # support the weights_only argument.
+            return torch.load(self.processed_paths[idx])
 
 
 def process_argoverse(split: str,
