@@ -89,7 +89,7 @@ class HiVT(pl.LightningModule):
 
     def forward(self, data: TemporalData):
         if self.rotate:
-            rotate_mat = torch.empty(data.num_nodes, 2, 2, device=self.device)
+            rotate_mat = torch.empty(data.num_nodes, 2, 2, device=data['rotate_angles'].device)
             sin_vals = torch.sin(data['rotate_angles'])
             cos_vals = torch.cos(data['rotate_angles'])
             rotate_mat[:, 0, 0] = cos_vals
